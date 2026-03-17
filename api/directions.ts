@@ -15,13 +15,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (preference) body.preference = preference;
 
   const orsRes = await fetch(
-    'https://api.openrouteservice.org/v2/directions/foot-walking/geojson',
+    `https://api.openrouteservice.org/v2/directions/foot-walking/geojson?api_key=${apiKey}`,
     {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: apiKey,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }
   );

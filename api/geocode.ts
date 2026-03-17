@@ -10,16 +10,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'ORS_API_KEY not configured' });
   }
 
-  const params = new URLSearchParams();
-  const allowed = ['text', 'boundary.country', 'focus.point.lat', 'focus.point.lon', 'size'];
-  for (const key of allowed) {
-    const val = req.query[key];
-    if (typeof val === 'string') params.set(key, val);
-  }
+  // Forward the raw query string to preserve dotted param keys
+  const queryString = req.url?.split('?')[1] || '';
 
   const orsRes = await fetch(
-    `https://api.openrouteservice.org/geocode/search?${params}`,
-    { headers: { Authorization: apiKey } }
+    `https://api.openrouteservice.org/geocode/search?${queryString}&api_key=${apiKey}`,
   );
 
   const data = await orsRes.json();
