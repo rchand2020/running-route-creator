@@ -501,8 +501,79 @@ html, body, #root {
   position: relative;
 }
 
+.address-search-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.locate-btn {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.locate-btn:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* Recenter Button */
+.recenter-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 12px;
+  z-index: 1000;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.recenter-btn:hover {
+  background: #eff6ff;
+  color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* User Location Dot */
+.user-location-pulse {
+  animation: location-pulse 2s ease-in-out infinite;
+}
+
+@keyframes location-pulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.3);
+  }
+}
+
 .address-input {
   width: 100%;
+  min-width: 0;
+  flex: 1;
   padding: 12px 12px 12px 40px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -678,6 +749,283 @@ html, body, #root {
   color: #9ca3af;
 }
 
+/* Panel Header Row */
+.panel-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Auth Button */
+.auth-button.auth-sign-in {
+  padding: 6px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.auth-button.auth-sign-in:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.auth-button.auth-signed-in {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.auth-email {
+  font-size: 11px;
+  color: #6b7280;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-sign-out {
+  padding: 2px 8px;
+  border: none;
+  background: none;
+  color: #9ca3af;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.auth-sign-out:hover {
+  color: #ef4444;
+}
+
+/* Auth Modal */
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.auth-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  width: 360px;
+  max-width: 90vw;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.auth-modal-close:hover {
+  color: #374151;
+}
+
+.auth-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.auth-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-input {
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.auth-input:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.auth-error {
+  font-size: 13px;
+  color: #dc2626;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border-radius: 8px;
+}
+
+.auth-success {
+  font-size: 14px;
+  color: #166534;
+  padding: 16px;
+  background: #f0fdf4;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Save Button */
+.save-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 2px 4px;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.save-btn:hover:not(:disabled) {
+  color: #f59e0b;
+  transform: scale(1.2);
+}
+
+.save-btn.saving {
+  color: #9ca3af;
+  animation: pulse 1s infinite;
+}
+
+.save-btn.saved {
+  color: #f59e0b;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.route-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Routes View Toggle */
+.routes-view-toggle {
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f4f6;
+  padding: 2px;
+}
+
+.routes-view-toggle button {
+  flex: 1;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.routes-view-toggle button.active {
+  background: white;
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Saved Route Card */
+.saved-route-card {
+  position: relative;
+}
+
+.saved-route-card::before {
+  background: #f59e0b;
+}
+
+.saved-route-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #d1d5db;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.saved-route-delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Link Button */
+.link-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: #2563eb;
+}
+
 /* Dark mode — follows macOS system preference */
 @media (prefers-color-scheme: dark) {
   html, body, #root {
@@ -847,6 +1195,29 @@ html, body, #root {
     color: #f87171;
   }
 
+  .locate-btn {
+    background: #2a2a3d;
+    border-color: #2d2d40;
+    color: #94a3b8;
+  }
+
+  .locate-btn:hover {
+    background: #1e2a4a;
+    border-color: #3b82f6;
+    color: #60a5fa;
+  }
+
+  .recenter-btn {
+    background: #2a2a3d;
+    color: #94a3b8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .recenter-btn:hover {
+    background: #1e2a4a;
+    color: #60a5fa;
+  }
+
   .address-input {
     background-color: #2a2a3d;
     border-color: #2d2d40;
@@ -913,6 +1284,105 @@ html, body, #root {
 
   .step-meta {
     color: #64748b;
+  }
+
+  /* Auth dark mode */
+  .auth-button.auth-sign-in {
+    background: #2a2a3d;
+    border-color: #2d2d40;
+    color: #94a3b8;
+  }
+
+  .auth-button.auth-sign-in:hover {
+    background: #1e2a4a;
+    border-color: #3b82f6;
+    color: #60a5fa;
+  }
+
+  .auth-email {
+    color: #94a3b8;
+  }
+
+  .auth-sign-out:hover {
+    color: #f87171;
+  }
+
+  .auth-modal {
+    background: #1e1e2f;
+  }
+
+  .auth-modal-title {
+    color: #f1f5f9;
+  }
+
+  .auth-modal-close:hover {
+    color: #cbd5e1;
+  }
+
+  .auth-tabs {
+    border-bottom-color: #2d2d40;
+  }
+
+  .auth-tab {
+    color: #64748b;
+  }
+
+  .auth-tab.active {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+  }
+
+  .auth-input {
+    background: #2a2a3d;
+    border-color: #2d2d40;
+    color: #e2e8f0;
+  }
+
+  .auth-input:focus {
+    background: #1e1e2f;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .auth-error {
+    background: #2d1b1b;
+    color: #f87171;
+  }
+
+  .auth-success {
+    background: #0d2818;
+    color: #6ee7b7;
+  }
+
+  .routes-view-toggle {
+    background: #2a2a3d;
+  }
+
+  .routes-view-toggle button {
+    color: #94a3b8;
+  }
+
+  .routes-view-toggle button.active {
+    background: #1e1e2f;
+    color: #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .saved-route-delete:hover {
+    color: #f87171;
+    background: #2d1b1b;
+  }
+
+  .save-btn {
+    color: #64748b;
+  }
+
+  .save-btn:hover:not(:disabled) {
+    color: #fbbf24;
+  }
+
+  .save-btn.saved {
+    color: #fbbf24;
   }
 }
 

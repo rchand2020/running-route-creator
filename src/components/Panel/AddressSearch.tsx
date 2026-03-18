@@ -4,9 +4,10 @@ import { geocodeSearch } from '../../services/ors';
 
 type Props = {
   onSelect: (latlng: LatLng) => void;
+  onLocateMe: () => void;
 };
 
-export function AddressSearch({ onSelect }: Props) {
+export function AddressSearch({ onSelect, onLocateMe }: Props) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
@@ -53,14 +54,25 @@ export function AddressSearch({ onSelect }: Props) {
 
   return (
     <div className="address-search">
-      <input
-        type="text"
-        className="address-input"
-        placeholder="Search address or place..."
-        value={query}
-        onChange={(e) => handleInputChange(e.target.value)}
-        onFocus={() => { if (results.length > 0 && !selectedLabel) setOpen(true); }}
-      />
+      <div className="address-search-row">
+        <input
+          type="text"
+          className="address-input"
+          placeholder="Search address or place..."
+          value={query}
+          onChange={(e) => handleInputChange(e.target.value)}
+          onFocus={() => { if (results.length > 0 && !selectedLabel) setOpen(true); }}
+        />
+        <button className="locate-btn" onClick={onLocateMe} title="Use my location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <line x1="12" y1="2" x2="12" y2="6" />
+            <line x1="12" y1="18" x2="12" y2="22" />
+            <line x1="2" y1="12" x2="6" y2="12" />
+            <line x1="18" y1="12" x2="22" y2="12" />
+          </svg>
+        </button>
+      </div>
       {open && (
         <ul className="address-dropdown">
           {results.map((r, i) => (

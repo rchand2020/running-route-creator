@@ -32,3 +32,9 @@ export type RouteResult = {
   directionLabel: string;
   steps: RouteStep[];
 };
+
+export type SavedRoute = RouteResult & {
+  savedId: string;
+  savedAt: string;
+  name: string;
+};

@@ -22,15 +22,17 @@ function buildOptions(terrain: TerrainPreference): Record<string, unknown> | und
 }
 
 export async function geocodeSearch(query: string): Promise<GeocodingResult[]> {
+  const apiKey = import.meta.env.VITE_ORS_API_KEY;
   const params = new URLSearchParams({
     text: query,
     'boundary.country': 'US',
     'focus.point.lat': '40.7128',
     'focus.point.lon': '-74.006',
     size: '5',
+    api_key: apiKey,
   });
 
-  const res = await fetch(`/api/geocode?${params}`);
+  const res = await fetch(`https://api.openrouteservice.org/geocode/search?${params}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Geocode error ${res.status}: ${text}`);
@@ -57,11 +59,15 @@ export async function fetchRoute(
     body.preference = opts.preference;
   }
 
-  const res = await fetch('/api/directions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const apiKey = import.meta.env.VITE_ORS_API_KEY;
+  const res = await fetch(
+    `https://api.openrouteservice.org/v2/directions/foot-walking/geojson?api_key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }
+  );
 
   if (!res.ok) {
     const text = await res.text();

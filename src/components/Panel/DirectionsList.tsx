@@ -22,34 +22,44 @@ const STEP_ICONS: Record<number, string> = {
   13: '→',
 };
 
-const STEP_LABELS: Record<number, string> = {
-  0: 'Head',
-  1: 'Continue straight',
-  2: 'Turn slight left',
-  3: 'Turn slight right',
-  4: 'Turn left',
-  5: 'Turn right',
-  6: 'Turn sharp left',
-  7: 'Turn sharp right',
-  8: 'Make a U-turn',
-  9: 'Make a U-turn',
-  10: 'Arrive',
-  11: 'Depart',
-  12: 'Keep left',
-  13: 'Keep right',
-};
-
-// "Continue straight" types that can be merged with the previous step
+// Types that represent going straight (can be merged)
 const STRAIGHT_TYPES = new Set([0, 1]);
-// Types that should never be dropped
-const IMPORTANT_TYPES = new Set([10, 11]); // Arrive, Depart
-
-const MIN_DISTANCE_FEET = 100;
+// Waypoint transition types (arrive at waypoint / depart from waypoint)
+const WAYPOINT_TYPES = new Set([10, 11]);
 
 function simplifySteps(steps: RouteStep[]): RouteStep[] {
-  const result: RouteStep[] = [];
+  // Step 1: Remove internal arrive/depart pairs (waypoint transitions).
+  // Keep only the very first depart and very last arrive.
+  const withoutWaypointNoise: RouteStep[] = [];
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    const isFirstStep = i === 0;
+    const isLastStep = i === steps.length - 1;
 
-  for (const step of steps) {
+    if (step.type === 10 && !isLastStep) {
+      // Internal "Arrive" — absorb distance into previous step
+      const prev = withoutWaypointNoise[withoutWaypointNoise.length - 1];
+      if (prev) {
+        withoutWaypointNoise[withoutWaypointNoise.length - 1] = {
+          ...prev,
+          distanceMiles: prev.distanceMiles + step.distanceMiles,
+          durationMinutes: prev.durationMinutes + step.durationMinutes,
+        };
+      }
+      continue;
+    }
+    if (step.type === 11 && !isFirstStep) {
+      // Internal "Depart" — absorb distance into next meaningful step
+      // by just skipping it (the distance is negligible)
+      continue;
+    }
+
+    withoutWaypointNoise.push(step);
+  }
+
+  // Step 2: Merge consecutive straight segments and absorb short unnamed segments
+  const result: RouteStep[] = [];
+  for (const step of withoutWaypointNoise) {
     const prev = result[result.length - 1];
 
     // Merge consecutive straight segments on the same road
@@ -67,20 +77,19 @@ function simplifySteps(steps: RouteStep[]): RouteStep[] {
       continue;
     }
 
-    // Drop very short segments that aren't real turns or arrive/depart
+    // Absorb short unnamed straight segments into the previous step
     if (
-      step.distanceMiles * 5280 < MIN_DISTANCE_FEET &&
+      prev &&
       STRAIGHT_TYPES.has(step.type) &&
-      !IMPORTANT_TYPES.has(step.type)
+      !WAYPOINT_TYPES.has(step.type) &&
+      (!step.name || step.name === '-') &&
+      step.distanceMiles * 5280 < 200
     ) {
-      // Absorb distance into previous step if possible
-      if (prev) {
-        result[result.length - 1] = {
-          ...prev,
-          distanceMiles: prev.distanceMiles + step.distanceMiles,
-          durationMinutes: prev.durationMinutes + step.durationMinutes,
-        };
-      }
+      result[result.length - 1] = {
+        ...prev,
+        distanceMiles: prev.distanceMiles + step.distanceMiles,
+        durationMinutes: prev.durationMinutes + step.durationMinutes,
+      };
       continue;
     }
 
@@ -104,11 +113,9 @@ function formatDuration(minutes: number): string {
 }
 
 function buildDescription(step: RouteStep): string {
-  const action = STEP_LABELS[step.type] ?? step.instruction;
-  if (step.name && step.name !== '-') {
-    return `${action} onto ${step.name}`;
-  }
-  return action;
+  // Prefer the ORS-provided instruction (e.g. "Turn left onto West 72nd Street")
+  if (step.instruction) return step.instruction;
+  return 'Continue';
 }
 
 export function DirectionsList({ steps }: Props) {

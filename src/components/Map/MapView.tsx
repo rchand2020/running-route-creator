@@ -7,6 +7,9 @@ import { RouteLayer } from './RouteLayer';
 import { FitBounds } from './FitBounds';
 import { CenterOnStart } from './CenterOnStart';
 import { DraggableWaypoints } from './DraggableWaypoints';
+import { RecenterButton } from './RecenterButton';
+import { UserLocationDot } from './UserLocationDot';
+import { CenterOnUserLocation } from './CenterOnUserLocation';
 import 'leaflet/dist/leaflet.css';
 
 function useDarkMode() {
@@ -29,6 +32,8 @@ type Props = {
   furthest: LatLng | null;
   routes: RouteResult[];
   selectedRouteId: string | null;
+  userLocation: LatLng | null;
+  locationGranted: boolean;
   onMapClick: (latlng: LatLng) => void;
   onSelectRoute: (id: string) => void;
   onWaypointDrag?: (routeId: string, waypointIndex: number, newPos: LatLng) => void;
@@ -40,6 +45,8 @@ export function MapView({
   furthest,
   routes,
   selectedRouteId,
+  userLocation,
+  locationGranted,
   onMapClick,
   onSelectRoute,
   onWaypointDrag,
@@ -49,11 +56,11 @@ export function MapView({
   const dark = useDarkMode();
 
   const tileUrl = dark
-    ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
     : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   const tileAttribution = dark
-    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+    ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
     : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
   return (
@@ -73,8 +80,11 @@ export function MapView({
           onWaypointAdd={onWaypointAdd}
         />
       )}
+      {userLocation && <UserLocationDot position={userLocation} />}
+      <CenterOnUserLocation userLocation={userLocation} start={start} />
       <CenterOnStart start={start} />
       <FitBounds routes={routes} />
+      <RecenterButton start={start} userLocation={userLocation} locationGranted={locationGranted} />
     </MapContainer>
   );
 }
